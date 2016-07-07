@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelpay.PayReq;
@@ -23,6 +24,10 @@ import cn.pedant.SafeWebViewBridge.JsCallback;
  * Created by Administrator on 2016/7/6.
  */
 public class AppJs {
+    public static String SUCCESSURL = "";
+    public static String FAILURL = "";
+    public static String CANCELURL = "";
+
     //微信支付
     public static void sendPayReq(WebView webView, JSONObject json) {
         Logger.d("hohoapp", json.toString());
@@ -44,6 +49,21 @@ public class AppJs {
             e.printStackTrace();
         }
 
+    }
+
+    public static void successurl(WebView webView, String url) {
+        SUCCESSURL = url;
+        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
+    }
+
+    public static void failurl(WebView webView, String url) {
+        FAILURL = url;
+        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
+    }
+
+    public static void cancelurl(WebView webView, String url) {
+        CANCELURL = url;
+        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
     }
 
     public static void wxAuth(WebView webView, final JsCallback jsCallback) {

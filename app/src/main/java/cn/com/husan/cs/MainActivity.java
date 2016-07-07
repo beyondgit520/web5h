@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext;
     private IWXAPI iwxapi;
     private JsCallback jsCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         dialog = new AlertDialog.Builder(this);
         dialog.setCancelable(false);
         regToWx();
+        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter("wx_pay"));
     }
 
     public void setJsCallback(JsCallback jsCallback) {
@@ -127,28 +129,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-//                Toast.makeText(MainActivity.this, "支付:" + intent.getIntExtra("result", -1), Toast.LENGTH_LONG).show();
-                switch (intent.getIntExtra("result", -1)) {
-                    case 0:
-                        Toast.makeText(MainActivity.this, "支付成功!", Toast.LENGTH_LONG).show();
-//                        webView.loadUrl("http://www.xi6666.com/user.php");
-                        break;
-                    case -1:
-                        Toast.makeText(MainActivity.this, "支付失败!", Toast.LENGTH_LONG).show();
-                        break;
-                    case -2:
-                        Toast.makeText(MainActivity.this, "你已取消支付!", Toast.LENGTH_LONG).show();
-//                        webView.loadUrl("http://www.xi6666.com/user.php?act=order_list&info=pay");
-                        break;
-                }
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getIntExtra("result", -1)) {
+                case 0:
+                    Toast.makeText(MainActivity.this, "支付成功!", Toast.LENGTH_SHORT).show();
+                    webView.loadUrl(AppJs.SUCCESSURL);
+                    break;
+                case -1:
+                    Toast.makeText(MainActivity.this, "支付失败!", Toast.LENGTH_SHORT).show();
+                    webView.loadUrl(AppJs.FAILURL);
+                    break;
+                case -2:
+                    Toast.makeText(MainActivity.this, "你已取消支付!", Toast.LENGTH_SHORT).show();
+                    webView.loadUrl(AppJs.CANCELURL);
+                    break;
             }
-        }, new IntentFilter("wx_pay"));
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
     }
 
     WebViewClient mWebViewClient = new WebViewClient() {

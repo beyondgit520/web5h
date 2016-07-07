@@ -25,6 +25,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     private IWXAPI api;
     LocalBroadcastManager localBroadcastManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,9 +51,10 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         Log.d(TAG, "onPayFinish, errCode = " + resp.errCode);
 
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+/*            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                @Override public void onClick(DialogInterface dialogInterface, int i) {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent("wx_pay");
                     switch (resp.errCode) {
                         case 0:
@@ -72,6 +74,21 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
             builder.setTitle("提示");
             builder.setMessage("微信支付结果：" + resp.errCode);
             builder.show();
+            builder.setCancelable(false);*/
+            Intent intent = new Intent("wx_pay");
+            switch (resp.errCode) {
+                case 0:
+                    intent.putExtra("result", 0);
+                    break;
+                case -1:
+                    intent.putExtra("result", -1);
+                    break;
+                case -2:
+                    intent.putExtra("result", -2);
+                    break;
+            }
+            localBroadcastManager.sendBroadcast(intent);
+            finish();
         }
     }
 }
