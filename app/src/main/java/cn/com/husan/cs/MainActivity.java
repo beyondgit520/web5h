@@ -31,12 +31,14 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.File;
 
 import cn.pedant.SafeWebViewBridge.InjectedChromeClient;
+import cn.pedant.SafeWebViewBridge.JsCallback;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     LocalBroadcastManager localBroadcastManager;
     private Context mContext;
     private IWXAPI iwxapi;
-
+    private JsCallback jsCallback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +66,20 @@ public class MainActivity extends AppCompatActivity {
         regToWx();
     }
 
+    public void setJsCallback(JsCallback jsCallback) {
+        this.jsCallback = jsCallback;
+    }
+
     private void regToWx() {
         iwxapi = WXAPIFactory.createWXAPI(mContext, Constant.APP_ID, true);
         iwxapi.registerApp(Constant.APP_ID);
+    }
+
+    public void login(View view) {
+        SendAuth.Req req = new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = "wechat_sdk_demo_test";
+        iwxapi.sendReq(req);
     }
 
     private void initWebView() {
@@ -120,18 +133,18 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(MainActivity.this, "支付:" + intent.getIntExtra("result", -1), Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, "支付:" + intent.getIntExtra("result", -1), Toast.LENGTH_LONG).show();
                 switch (intent.getIntExtra("result", -1)) {
                     case 0:
-//                        Toast.makeText(MainActivity.this,"支付成功",Toast.LENGTH_LONG).show();
-                        webView.loadUrl("http://www.xi6666.com/user.php");
+                        Toast.makeText(MainActivity.this, "支付成功!", Toast.LENGTH_LONG).show();
+//                        webView.loadUrl("http://www.xi6666.com/user.php");
                         break;
                     case -1:
-                        Toast.makeText(MainActivity.this, "支付失败:-1", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "支付失败!", Toast.LENGTH_LONG).show();
                         break;
                     case -2:
-                        Toast.makeText(MainActivity.this, "你已取消支付", Toast.LENGTH_LONG).show();
-                        webView.loadUrl("http://www.xi6666.com/user.php?act=order_list&info=pay");
+                        Toast.makeText(MainActivity.this, "你已取消支付!", Toast.LENGTH_LONG).show();
+//                        webView.loadUrl("http://www.xi6666.com/user.php?act=order_list&info=pay");
                         break;
                 }
             }
@@ -140,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
 
     WebViewClient mWebViewClient = new WebViewClient() {
 
-        @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             return false;
         }
 
@@ -151,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             if (!webSettings.getLoadsImagesAutomatically()) {
                 webSettings.setLoadsImagesAutomatically(true);
             }
+            if (url.equals(Constant.path)) view.clearHistory();
         }
     };
     private AlertDialog.Builder dialog;
