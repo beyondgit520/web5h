@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -162,6 +163,15 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            if (url.equals(Constant.path) || url.equals(Constant.path + "/index.php")) {
+                view.clearHistory();
+            }
+
+        }
+
         @TargetApi(Build.VERSION_CODES.KITKAT)
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
@@ -169,7 +179,9 @@ public class MainActivity extends AppCompatActivity {
             if (!webSettings.getLoadsImagesAutomatically()) {
                 webSettings.setLoadsImagesAutomatically(true);
             }
-            if (url.equals(Constant.path)) view.clearHistory();
+            if (url.equals(Constant.path) || url.equals(Constant.path + "/index.php")) {
+                view.clearHistory();
+            }
         }
     };
     private AlertDialog.Builder dialog;

@@ -53,17 +53,17 @@ public class AppJs {
 
     public static void successurl(WebView webView, String url) {
         SUCCESSURL = url;
-        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(webView.getContext(),"successurl:"+url,Toast.LENGTH_SHORT).show();
     }
 
     public static void failurl(WebView webView, String url) {
         FAILURL = url;
-        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(webView.getContext(),"failurl:"+url,Toast.LENGTH_SHORT).show();
     }
 
     public static void cancelurl(WebView webView, String url) {
         CANCELURL = url;
-        Toast.makeText(webView.getContext(),url,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(webView.getContext(),"cancelurl:"+url,Toast.LENGTH_SHORT).show();
     }
 
     public static void wxAuth(WebView webView, final JsCallback jsCallback) {
