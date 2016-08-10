@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSettings.setGeolocationEnabled(true);
-        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setDomStorageEnabled(true);
         webSettings.setDatabaseEnabled(true);
         String cacheDirPath = getApplicationContext().getDir("database", Context.MODE_PRIVATE).getPath();//APP.baseDir+APP_CACAHE_DIRNAME;
